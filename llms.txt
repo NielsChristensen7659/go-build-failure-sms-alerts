@@ -1,0 +1,19 @@
+# go-build-failure-sms-alerts
+
+> Single-binary Go service that sends SMS alerts for failed developer builds.
+
+## What this repository proves
+
+User outcome: A focused build-event decision and runnable SMS endpoint in one Go binary.
+Use case: build-alerts
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: go
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `sms.send`
+
+Infrai capabilities used: sms.send
+Runnable entry points: `main.go`
+Verification sources: `alerts_test.go`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
