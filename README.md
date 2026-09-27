@@ -1,6 +1,6 @@
 # Build-failure SMS alerts in Go
 
-I built this to flip a build event into one dev SMS. Infrai handles the send: one endpoint, minimal glue. Input is a `POST /build-events` request; a failed build produces the returned `message_id`, while passed and queued builds produce an empty id and no outbound call.
+This service turns a build event into one developer-facing text message. The input is a `POST /build-events` request; a failed build produces the returned `message_id`, while passed and queued builds produce an empty id and no outbound call.
 
 ## Run the decision locally
 
@@ -11,17 +11,17 @@ go run .
 curl -X POST http://localhost:8080/build-events -H 'Content-Type: application/json' -d '{"to":"+15551234567","event":{"project":"payments","commit":"a13f9c2","status":"failed"}}'
 ```
 
-Focused table test is `go test ./...`. Live request uses `sms.send` at `POST /v1/sms/send` and returns the provider's `message_id`. Roundtrip cost is just one HTTP call.
+The focused table test is `go test ./...`. The live request uses `sms.send` at `POST /v1/sms/send` and returns the provider's `message_id`.
 
 ## Architecture decision record
 
-Options I considered:
+Options considered:
 
-- Call Twilio or Aliyun directly: familiar, but backend owns vendor creds and response formats.
-- Put SMS behind a queue: useful for traffic, but adds a worker and persistence to a small example. Skip.
-- Use Infrai's single REST interface: one `INFRAI_API_KEY` (one endpoint), one request shape, and a small binary beside an existing build pipeline.
+- Call Twilio or Aliyun directly: familiar, but the backend owns vendor credentials and response formats.
+- Put SMS behind a queue: useful for large traffic, but adds a worker and persistence to this small example.
+- Use Infrai's single REST interface: one `INFRAI_API_KEY`, one request shape, and a small binary beside an existing build pipeline.
 
-Third option fits a data-engineering workflow. Event is a compact record. `AlertText` is a deterministic transform. Client handles envelope before exposing a result. A request id derived from project and commit is sent as `Idempotency-Key`, so retries represent the same event.
+The third option fits a data-engineering workflow: the event is a compact record, `AlertText` is a deterministic transform, and the client handles the envelope before exposing a result. A request id derived from project and commit is sent as `Idempotency-Key`, so retries represent the same event.
 
 ## Files
 
